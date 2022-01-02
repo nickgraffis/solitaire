@@ -8,7 +8,8 @@
 My mom, have fun with it if you like...
 
 # 🤔 Things to consider
-How should I make this a really useable drag and drop? 🤔...Working on it, for now, it's just moving cards with the double click.
+1. How should I make this a really useable drag and drop? 🤔...Working on it, for now, it's just moving cards with the double click.
+2. What should I do when the user wins? 🤷‍♂️...That is always the coolest part right?
 
 # 🤓 Nerdy stuff
 When creating a new game we need to start off with a deck of cards:
