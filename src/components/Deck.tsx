@@ -11,7 +11,17 @@ const SuitMap = [
 
 export const Deck = (): JSX.Element => {
   const [deck, setDeck] = useGlobalState('deck');
-  console.log(deck.filter(card => card.flipped))
+  const restartDeck = () => {
+    console.log('restarting deck')
+    setDeck(prev => prev.map(card => {
+      console.log(prev, card)
+      return {
+        ...card,
+        flipped: false
+      }
+    }))
+    console.log(deck)
+  }
   return (<>
   <div className="flex space-x-4">
     {
@@ -24,13 +34,15 @@ export const Deck = (): JSX.Element => {
       })
     }
     {
-      deck.filter(card => !card.flipped).map((card, i: number) => {
-        return i === 0 && <Card 
-          key={i}
-          cardObj={{...card}}
-          isInDeck={true}
-        />
-      })
+      deck.filter(card => !card.flipped).length ? 
+        deck.filter(card => !card.flipped).map((card, i: number) => {
+          return i === 0 && <Card 
+            key={i}
+            cardObj={{...card}}
+            isInDeck={true}
+          />
+        }) :
+        <div onClick={() => restartDeck()} className="h-[200px] w-[150px] shadow-inner"></div>
     }
   </div>
   </>)

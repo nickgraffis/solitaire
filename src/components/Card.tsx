@@ -5,6 +5,7 @@ import { knightImage } from './knightImage'
 import useDoubleClick from '../useDoubleClick'
 import { useFindOptions } from '../usDeck'
 import { useGlobalState } from '../App'
+import { useOpenCards, useValidMoves } from '../logics/cardLogics'
 type Props = {
   cardObj: CardType,
   isInDeck: boolean,
@@ -15,6 +16,8 @@ export const Card = ({ cardObj, isInDeck }: Props): JSX.Element => {
   const [finishedDeck, setFinishedDeck] = useGlobalState('finished')
   const [deck, setDeck] = useGlobalState('deck')
   const cardRef = useRef<HTMLDivElement>(null)
+  const openCards = useOpenCards()
+  const validMoves = useValidMoves(cardObj)
   if (!cardObj) return <div>No card</div>
   // const [{ isDragging }, drag, preview] = useDrag(
   //   () => ({
@@ -25,31 +28,6 @@ export const Card = ({ cardObj, isInDeck }: Props): JSX.Element => {
   //   }),
   //   [],
   // )
-
-  const openCards = () => {
-    const finished = finishedDeck.map((deck, i) => {
-      if (!deck.length) {
-         return {
-           suit: SuitMap[i],
-           value: 'zero'
-         }
-      } else {
-        return deck[deck.length - 1]
-      }
-    })
-    const unfinished = unfinishedDeck.map((deck, i) => {
-      if (!deck.length) {
-         return {
-           suit: SuitMap[i],
-           value: 'zero'
-         }
-      } else {
-        return deck[deck.length - 1]
-      }
-    })
-
-    return [...finished, ...unfinished]
-  }
 
   const CardSuitMap = [
     'hearts',
@@ -78,32 +56,7 @@ export const Card = ({ cardObj, isInDeck }: Props): JSX.Element => {
   const black = ['clubs', 'spades']
 
   const findOptions = () => {
-    const options = openCards()
-    const color = red.includes(cardObj.suit) ? 'red' : 'black'
-    const validOptions = []
-    options.forEach((card, i ) => {
-      const optionColor = red.includes(card.suit) ? 'red' : 'black'
-      if (i < 4 && cardObj.suit === card.suit && CardValueMap.indexOf(cardObj.value) === CardValueMap.indexOf(card.value) + 1) {
-        validOptions.push({
-          ...card,
-          position: i
-        })
-      } 
-      
-      if (i > 3 && color !== optionColor &&  CardValueMap.indexOf(cardObj.value) + 1 === CardValueMap.indexOf(card.value)) {
-        validOptions.push({
-          ...card,
-          position: i
-        })
-      }
-
-      if (i > 3 && cardObj.value === 'king' && card.value === 'zero') {
-        validOptions.push({
-          ...card,
-          position: i
-        })
-      }
-    })
+    const validOptions = validMoves
     if (validOptions.length) {
       // is it in unfinished or finished?
     if(validOptions[0].position < 4) {
@@ -131,18 +84,24 @@ export const Card = ({ cardObj, isInDeck }: Props): JSX.Element => {
     } else if (validOptions[0].position > 3) {
         // Get the card from the unfinished deck
         let targetCards
+        const cardsToMove = []
         if (!isInDeck) {
           targetCards = [...unfinishedDeck[cardObj.position]]
-          console.log(targetCards.splice(targetCards.indexOf(targetCards.find(card => card.cardId === cardObj.cardId))))
+          cardsToMove.push(...targetCards.splice(targetCards.indexOf(targetCards.find(card => card.cardId === cardObj.cardId))))
+          console.log(cardsToMove)
         }
         setUnfinishedDeck(prev => prev.map((col, i) => {
           // Add the card to the column
-          if (i === validOptions[0].position - 4) {
+          if (i === validOptions[0].position - 4 && !isInDeck) {
+            prev[i] = [...prev[i], ...cardsToMove]
+          }
+
+          if (i === validOptions[0].position - 4 && isInDeck) {
             prev[i] = [...prev[i], cardObj]
           }
           // Remove the old card
           if (i === cardObj.position && !isInDeck) {
-            prev[i] = prev[i].slice(0, prev[i].length - 1)
+            prev[i] = prev[i].slice(0, prev[i].length - cardsToMove.length)
             if (prev[i].length) prev[i][prev[i].length - 1].flipped = true
           }
 
