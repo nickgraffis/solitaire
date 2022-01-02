@@ -87,6 +87,7 @@ const row = (cards: number, flipped: number) => {
       ...shuffledDeck.pop(),
       flipped: cardsFlipped < flipped,
       position: cards + 3
+      //+ 3 because 0, 1, 2, 3 are all for the finished slots
     })
     cardsFlipped++
   }
