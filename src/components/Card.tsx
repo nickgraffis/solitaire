@@ -81,6 +81,11 @@ export const Card = ({ cardObj, isInDeck }: Props): JSX.Element => {
         console.log(prev[i])
         return prev[i]
       }))
+
+      if (isInDeck) {
+        setDeck(prev => prev.filter(card => card.cardId !== cardObj.cardId))
+        console.log(deck)
+      }
     } else if (validOptions[0].position > 3) {
         // Get the card from the unfinished deck
         let targetCards
@@ -110,6 +115,7 @@ export const Card = ({ cardObj, isInDeck }: Props): JSX.Element => {
 
         if (isInDeck) {
           setDeck(prev => prev.filter(card => card.cardId !== cardObj.cardId))
+          console.log(deck)
         }
       }
     }
