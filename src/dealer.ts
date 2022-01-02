@@ -89,7 +89,8 @@ const deck = Array(4).fill(0).map((_, suit) => Array(13).fill(0).map((_, number)
   value: _getValue(number),
   image: `./${_getValue(number)}_${_getSuit(suit)}.svg`,
   flipped: false,
-  cardId: `${_getValue(number)}_${_getSuit(suit)}`
+  cardId: `${_getValue(number)}_${_getSuit(suit)}`,
+  position: -1
 }))).flat()
 
 // Shuffle the deck of cards
@@ -112,7 +113,8 @@ const row = (cards: number, flipped: number) => {
   for (let i = 0; i < cards; i++) {
     row.push({
       ...shuffledDeck.pop(),
-      flipped: cardsFlipped < flipped
+      flipped: cardsFlipped < flipped,
+      position: cards + 3
     })
     cardsFlipped++
   }

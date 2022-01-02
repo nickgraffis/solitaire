@@ -11,7 +11,8 @@ const SuitMap = [
 
 export const UnFinishedStack = (): JSX.Element => {
   const [unfinishedDeck, setUnfinishedDeck] = useGlobalState('unfinished');
-  return (<div className="flex space-x-4 py-12">
+  return (<>
+  <div className="flex space-x-4 py-12">
     {
       Array(7).fill(0).map((_, i: number) => 
         <div 
@@ -21,12 +22,17 @@ export const UnFinishedStack = (): JSX.Element => {
             unfinishedDeck[i].map((card, j: number) => 
             <div key={i + j + 'cards'} className={`${j !== 0 && '-mt-24'} h-[125px]`}>
               <Card 
-                cardObj={card}
+                cardObj={{...card, position: i}}
               />
             </div>)
+          }
+          {
+            unfinishedDeck[i].length === 0 &&
+            <div className="h-[200px] w-[150px] shadow-inner"></div>
           }
         </div>
       )
     }
-  </div>)
+  </div>
+  </>)
 }
